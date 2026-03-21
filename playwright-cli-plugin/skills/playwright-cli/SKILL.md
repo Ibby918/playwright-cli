@@ -1,117 +1,84 @@
 ---
 name: playwright-cli
-description: >
-  Use this skill whenever the user wants to control a web browser, automate browser actions,
-  scrape website data, take screenshots of web pages, fill forms, click buttons, or run web
-  tests. Trigger for requests like "go to this website and get X data", "take a screenshot of
-  this page", "scrape the float data from Finviz", "automate this form submission", "check
-  what's on this page", "click the button on this site", or "test my web app". Also trigger
-  for any trading-related web automation — scraping stock screeners, pulling short interest
-  data, grabbing earnings calendars from sites without APIs, or testing a SaaS frontend.
-  Skip when a public API already exists for the data the user wants — use that instead.
-  Skip for static page reading where web_fetch is sufficient. Use this skill when the user
-  needs actual browser interaction: JavaScript execution, login sessions, dynamic content,
-  or clicking/typing on a live page.
+description: Use when the user wants to control a web browser, scrape website data, take page screenshots, fill forms, click buttons, run web tests, or automate any live web interaction. Triggers on "go to this site and get X", "scrape float data", "automate this form", "screenshot this page", "test my frontend", or "click the button on this site".
 ---
 
-# Playwright CLI — Browser Automation for Claude Code
+# Playwright CLI — Browser Automation
 
-Microsoft's official Playwright CLI as a Claude Code skill. Control Chrome headlessly or
-visually — navigate pages, interact with elements, take screenshots, run web tests.
+Microsoft's official Playwright CLI as a Claude Code skill. Control Chrome — navigate,
+interact, screenshot, scrape, test — headless or visible.
 
-## Prerequisites
+**Requires:** `npm install -g @playwright/mcp@latest`
 
-```bash
-npm install -g @playwright/mcp@latest
-```
+## When to Use
+
+- Scraping sites without public APIs (Finviz, earnings calendars, short interest)
+- Taking screenshots of charts or web pages
+- Automating form submissions or UI interactions
+- Testing your SaaS frontend during development
+
+**Skip when:** A public API already covers the data. Skip for static pages — `web_fetch` is faster. Use `opencli` for structured data from the 17 supported sites.
+
+## Standard Workflow
+
+1. Open URL: `playwright-cli open <url>`
+2. Get element refs: `playwright-cli snapshot`
+3. Interact using refs: `playwright-cli click e12`
+4. Verify: `playwright-cli screenshot`
 
 ## Core Commands
 
 ```bash
 # Navigation
-playwright-cli open <url>              # Open a URL in the browser
-playwright-cli close                   # Close the current page
-playwright-cli go-back                 # Navigate back
-playwright-cli go-forward              # Navigate forward
-playwright-cli reload                  # Reload current page
+playwright-cli open <url>              # Open URL
+playwright-cli open <url> --headed     # See the browser
+playwright-cli close                   # Close page
+playwright-cli go-back
+playwright-cli reload
 
-# Page Analysis
-playwright-cli snapshot                # Capture page snapshot — gets element refs
-playwright-cli screenshot              # Take a screenshot
-playwright-cli screenshot <ref>        # Screenshot of a specific element
-playwright-cli pdf                     # Save page as PDF
+# Page
+playwright-cli snapshot                # Get element refs (do this before clicking)
+playwright-cli screenshot              # Full page screenshot
+playwright-cli pdf                     # Save as PDF
+playwright-cli eval <js>               # Execute JavaScript
 
 # Interaction
-playwright-cli click <ref>             # Click an element (get ref from snapshot)
-playwright-cli dblclick <ref>          # Double-click
-playwright-cli type <text>             # Type text into focused element
-playwright-cli fill <ref> <text>       # Fill a specific form field
-playwright-cli select <ref> <value>    # Select dropdown option
-playwright-cli check <ref>             # Check a checkbox
-playwright-cli uncheck <ref>           # Uncheck a checkbox
-playwright-cli hover <ref>             # Hover over element
-playwright-cli drag <startRef> <endRef># Drag and drop
-
-# Keyboard
-playwright-cli press <key>             # Press a key (e.g. Enter, Tab, Escape)
-playwright-cli keydown <key>           # Hold a key down
-playwright-cli keyup <key>             # Release a key
-
-# JavaScript
-playwright-cli eval <function>         # Execute JavaScript on the page
-playwright-cli eval <function> <ref>   # Execute JS on a specific element
-
-# Dialogs
-playwright-cli dialog-accept           # Accept a browser dialog/alert
-playwright-cli dialog-dismiss          # Dismiss a dialog
-
-# Window
-playwright-cli resize <w> <h>          # Resize browser window
-
-# Tabs
-playwright-cli tab-new [url]           # Open a new tab
-playwright-cli tab-list                # List all open tabs
-playwright-cli tab-select <index>      # Switch to a tab
-playwright-cli tab-close [index]       # Close a tab
+playwright-cli click <ref>             # Click element (ref from snapshot)
+playwright-cli dblclick <ref>
+playwright-cli type <text>             # Type into focused element
+playwright-cli fill <ref> <text>       # Fill a specific field
+playwright-cli select <ref> <value>    # Dropdown
+playwright-cli check <ref>             # Checkbox on
+playwright-cli uncheck <ref>           # Checkbox off
+playwright-cli hover <ref>
+playwright-cli press <key>             # e.g. Enter, Tab, Escape, ArrowDown
 
 # DevTools
-playwright-cli console                 # Read browser console messages
-playwright-cli network                 # List network requests
-playwright-cli tracing-start           # Start recording a trace
-playwright-cli tracing-stop            # Stop and save trace
-playwright-cli run-code <code>         # Run arbitrary Playwright code
+playwright-cli console                 # Browser console messages
+playwright-cli network                 # Network requests log
+
+# Tabs
+playwright-cli tab-new [url]
+playwright-cli tab-list
+playwright-cli tab-select <index>
+playwright-cli tab-close [index]
 ```
-
-## Standard Workflow
-
-1. Open the page: `playwright-cli open https://finviz.com/screener.ashx`
-2. Snapshot for element refs: `playwright-cli snapshot`
-3. Interact using refs from snapshot: `playwright-cli click e12`
-4. Type/fill: `playwright-cli fill e23 "NVDA"`
-5. Screenshot to verify: `playwright-cli screenshot`
 
 ## Sessions (Multiple Browsers)
 
 ```bash
 playwright-cli open https://site-a.com              # Default session
-playwright-cli --session=work open https://site-b.com  # Named session
-playwright-cli session-list                         # List all sessions
-playwright-cli session-stop work                    # Stop a session
-playwright-cli session-stop-all                     # Close all sessions
+playwright-cli --session=work open https://site-b.com
+playwright-cli session-list
+playwright-cli session-stop-all
 ```
 
-Sessions are persistent — cookies and storage are preserved between calls.
-
-## Headed Mode (See the Browser)
-
-```bash
-playwright-cli open https://example.com --headed
-```
+Sessions persist cookies and storage between calls.
 
 ## Trading Use Cases
 
 ```bash
-# Scrape float data from Finviz
+# Scrape Finviz for float data
 playwright-cli open "https://finviz.com/quote.ashx?t=NVDA" --headed
 playwright-cli snapshot
 playwright-cli screenshot
@@ -120,15 +87,15 @@ playwright-cli screenshot
 playwright-cli open "https://earningswhispers.com/calendar"
 playwright-cli snapshot
 
-# Test your SaaS trading dashboard
+# Test SaaS dashboard
 playwright-cli open "http://localhost:3000"
+playwright-cli click e5    # Login button ref from snapshot
 playwright-cli screenshot
-playwright-cli click e5    # Click login button (ref from snapshot)
 ```
 
-## Environment Variable for Session
+## Common Mistakes
 
-```bash
-PLAYWRIGHT_CLI_SESSION=trading-app claude .
-```
-Sets the session automatically for all playwright-cli calls in that Claude session.
+- Clicking before taking a snapshot — always `snapshot` first to get element refs
+- Using `type` when `fill` is needed — `type` simulates keystrokes on whatever is focused; `fill` sets a field directly
+- Not using `--headed` when debugging — add it to see what's happening
+- Using this for static page reading — `web_fetch` is faster and lighter
