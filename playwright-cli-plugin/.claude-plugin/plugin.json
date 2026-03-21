@@ -1,0 +1,5 @@
+{
+  "name": "playwright-cli",
+  "description": "Playwright CLI for Claude Code. Control browsers, click, type, screenshot and automate web testing.",
+  "author": { "name": "microsoft" }
+}
