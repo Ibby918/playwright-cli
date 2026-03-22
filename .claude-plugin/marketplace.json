@@ -1,0 +1,22 @@
+﻿{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "playwright-cli",
+  "owner": {
+    "name": "microsoft"
+  },
+  "metadata": {
+    "description": "Playwright CLI for Claude Code. Control browsers, click, type, screenshot and automate web testing."
+  },
+  "plugins": [
+    {
+      "name": "playwright-cli",
+      "source": "./playwright-cli-plugin",
+      "description": "Playwright CLI for Claude Code. Control browsers, click, type, screenshot and automate web testing.",
+      "author": {
+        "name": "microsoft"
+      },
+      "category": "development",
+      "homepage": "https://github.com/Ibby918/playwright-cli"
+    }
+  ]
+}
